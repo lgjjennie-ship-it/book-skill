@@ -18,6 +18,9 @@ skills/
 .DS_Store
 Thumbs.db
 
+# Internal planning (local only, not for public repo)
+变现规划.md
+
 # Virtual env
 venv/
 .venv/
