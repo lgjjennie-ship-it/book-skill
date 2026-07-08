@@ -1,153 +1,316 @@
-# 📚 book2skill
+# 📚 book2skill — 把书变成 AI 技能
 
-将任意书籍（PDF / EPUB / TXT）转换为 **OpenCode 兼容的 AI 技能**。
+`book2skill` 是一个命令行工具，能把 PDF、EPUB、TXT 格式的电子书，自动转换成 OpenCode 能读懂的"技能文件"。转换后，你在 OpenCode 聊天框里提到书名或章节名，AI 就能像读过这本书一样回答你的问题。
 
-扔一本书进去，输出一个结构化的技能目录——主技能、逐章子技能、目录索引、机器可读的元数据。
+---
 
-## 快速开始
+## 目录
+
+1. [前置准备：装好 Python](#1-前置准备装好-python)
+2. [下载安装 book2skill](#2-下载安装-book2skill)
+3. [转换你的第一本书](#3-转换你的第一本书)
+4. [把技能部署到 OpenCode](#4-把技能部署到-opencode)
+5. [在 OpenCode 中使用](#5-在-opencode-中使用)
+6. [转换结果长什么样](#6-转换结果长什么样)
+7. [高级用法](#7-高级用法)
+8. [常见问题](#8-常见问题)
+
+---
+
+## 1. 前置准备：装好 Python
+
+`book2skill` 是一个 Python 工具，所以你的电脑需要先装 Python。
+
+### 检查是否已安装
+
+打开终端（Mac 按 `Cmd + 空格`，搜索"终端"；Windows 搜索"命令提示符"），输入：
 
 ```bash
-# 安装
-pip install git+https://github.com/lgjjennie-ship-it/book-skill.git
-
-# 转换一本书
-book2skill mybook.pdf -o ./skills/
-
-# 输出结构：
-# skills/mybook/
-#   ├── SKILL.md           # 主技能（全书问答）
-#   ├── toc.md             # 目录索引
-#   ├── metadata.json      # 机器可读元数据
-#   └── chapters/
-#       ├── 01_介绍/
-#       │   └── SKILL.md   # 章节子技能
-#       ├── 02_基础理论/
-#       │   └── SKILL.md
-#       └── ...
+python3 --version
 ```
 
-## 使用方式
+如果看到类似 `Python 3.10.x` 或更高版本，说明已经装好了。
+
+如果看到 `command not found` 或 `'python3' 不是内部或外部命令`，说明还没装。
+
+### 安装 Python（如果没装）
+
+**Mac 用户：**
+1. 打开 https://www.python.org/downloads/
+2. 点击黄色按钮下载最新版 Python 安装包
+3. 双击 `.pkg` 文件，一路点"继续"→"安装"即可
+4. 装完后重新打开终端，输入 `python3 --version` 确认
+
+**Windows 用户：**
+1. 打开 https://www.python.org/downloads/
+2. 下载 Python 安装包
+3. 双击运行，**务必勾选底部的 "Add Python to PATH"**，然后点 Install
+4. 装完后打开命令提示符，输入 `python --version` 确认
+
+> 💡 安装完 Python 后，`pip`（Python 的包管理工具）会自动一同安装，下一步会用到。
+
+---
+
+## 2. 下载安装 book2skill
+
+在终端中输入下面这行命令，回车：
 
 ```bash
-# 基础用法：自动识别书名，输出到 ./skills/
-book2skill mybook.pdf
+pip3 install git+https://github.com/lgjjennie-ship-it/book-skill.git
+```
 
-# EPUB 格式
-book2skill mybook.epub -o ~/.config/opencode/skills/
+你会看到类似这样的输出，说明正在下载安装：
 
-# 自定义 slug 和书名
-book2skill mybook.txt -s ml-handbook -t "机器学习实战"
+```
+Collecting git+https://github.com/lgjjennie-ship-it/book-skill.git
+  Cloning https://github.com/lgjjennie-ship-it/book-skill.git to /tmp/pip-...
+  Installing build dependencies ... done
+  ...
+Successfully installed book2skill-0.1.0 pdfplumber-0.11.4 ebooklib-0.18 ...
+```
 
-# 仅预览目录，不生成技能
+### 验证安装成功
+
+```bash
+book2skill --version
+```
+
+如果输出了版本号（如 `book2skill 0.1.0`），说明安装成功。
+
+> **Windows 用户注意：** 如果提示 `'book2skill' 不是内部或外部命令`，关掉命令行窗口重新打开，再试一次。如果还是不行，用 `python -m book2skill --version` 代替。
+
+---
+
+## 3. 转换你的第一本书
+
+### 准备工作
+
+把你的书放在一个你知道的文件夹里，比如桌面上的 `mybooks` 文件夹。支持以下格式：
+
+| 格式 | 后缀 | 说明 |
+|------|------|------|
+| PDF | `.pdf` | 最常见的电子书格式 |
+| EPUB | `.epub` | 很多电子书阅读器用的格式 |
+| TXT | `.txt` | 纯文本 |
+
+### 执行转换
+
+假设你的书在桌面 `mybooks` 文件夹里，叫 `机器学习实战.pdf`：
+
+```bash
+book2skill ~/Desktop/mybooks/机器学习实战.pdf
+```
+
+路径太长不想手打？在终端里先输入 `book2skill `（末尾有个空格），然后把 PDF 文件直接拖进终端窗口，路径会自动填上。
+
+回车后，你会看到类似这样的输出：
+
+```
+📖 摘要: 机器学习实战
+   章节: 15 章
+   关键词: 监督学习, 无监督学习, 神经网络, ...
+   → skills/机器学习实战/
+
+✅ 已生成 16 个技能 (1 master + 15 chapters)
+```
+
+### 文件放在哪里了？
+
+默认输出到当前目录下的 `skills/` 文件夹。比如你在桌面开的终端，文件就在 `桌面/skills/机器学习实战/`。
+
+想换输出位置？用 `-o` 参数指定：
+
+```bash
+book2skill ~/Desktop/mybooks/机器学习实战.pdf -o ~/Documents/my-skills/
+```
+
+### 其他常用参数
+
+```bash
+# 只想看目录，不生成文件（常用：先确认目录对不对）
 book2skill mybook.pdf --toc-only
 
-# 输出元数据 JSON
-book2skill mybook.pdf --json
+# 自己指定书名
+book2skill mybook.txt -t "数据分析入门"
+
+# 自己指定英文短名（slug）
+book2skill mybook.pdf -s data-analysis
 ```
 
-### 参数说明
+---
 
-| 参数 | 说明 |
-|------|------|
-| `-o, --output` | 输出目录（默认 `./skills/`） |
-| `-s, --slug` | 自定义书籍 slug，用于技能命名 |
-| `-t, --title` | 覆盖自动识别的书名 |
-| `--toc-only` | 仅提取并打印目录，不生成技能文件 |
-| `--json` | 输出 metadata.json 到标准输出 |
-| `--version` | 显示版本号 |
+## 4. 把技能部署到 OpenCode
 
-## 支持格式
+OpenCode 会自动加载 `~/.config/opencode/skills/` 目录下的技能文件。所以只需要把生成好的技能文件夹放进去就行。
 
-| 格式 | 扩展名 | 解析器 |
-|--------|-----------|--------|
-| PDF | `.pdf` | pdfplumber |
-| EPUB | `.epub` | ebooklib + BeautifulSoup |
-| 纯文本 | `.txt`, `.md` | UTF-8 直接读取 |
-
-## 生成技能结构
-
-```
-skills/{book_slug}/
-├── SKILL.md              # 主技能
-│   ├── 名称：{book_slug}
-│   ├── 触发词：书名、关键词
-│   ├── 内容：全书摘要、核心概念、章节目录
-│   └── 导航：指向所有子技能的链接
-│
-├── toc.md                # 完整目录 + 各章摘要
-│
-├── metadata.json         # 机器可读元数据
-│   └── { title, author, chapters[], keywords[], ... }
-│
-└── chapters/
-    ├── 01_章节名/
-    │   └── SKILL.md      # 子技能
-    │       ├── 名称：{book_slug}-ch01
-    │       ├── 触发词：章节名、编号
-    │       ├── 内容：章摘要、关键知识点、压缩全文
-    │       └── 关联：上一章/下一章 导航链接
-    └── 02_另一章节/
-        └── SKILL.md
-```
-
-## 工作流程
-
-```
-书籍文件（PDF/EPUB/TXT）
-  → [Parser]    提取原始文本 + 元数据
-  → [TOC]       识别章节目录结构（中文/英文模式）
-  → [Chunker]   按章节切分文本
-  → [Generator] 渲染 SKILL.md 文件 + 元数据
-  → 输出：结构化技能目录
-```
-
-## 中文书籍支持
-
-`book2skill` 原生支持中文书籍的目录提取：
-
-- **中文章节识别**：`第一章`、`第1章`、`第X节` 等模式
-- **子节层级**：`1.1`、`3.2.1` 编号格式自动建层级树
-- **自适应阈值**：短文本（如测试样章）自动降低最小章节长度要求
-- **纯中文 slug**：`第一章 数据分析基础` → `第一章数据分析基础-16788f53`（MD5 后缀确保唯一）
-- **标题关键词**：从章节标题和子标题提取关键词，避免无分词器下的 n-gram 噪声
-
-## 安装为 OpenCode 技能
-
-1. 生成技能文件：
-   ```bash
-   book2skill mybook.pdf -o ~/.config/opencode/skills/
-   ```
-
-2. 重启 OpenCode —— 技能从 `~/.config/opencode/skills/` 自动发现
-
-3. 在对话中提及书名、章节名即可触发对应技能
-
-## GitHub Actions
-
-将 `.github/workflows/book2skill.yml` 添加到你的书籍仓库：
-
-```yaml
-# 将书籍文件放入 books/ 目录，push 时自动转换
-books/
-├── mybook.pdf
-└── another-book.epub
-```
-
-每次 push 时，Action 会转换所有书籍并将生成的技能文件打包上传为 artifact。
-
-## 开发
+### 方法一：一键生成到 OpenCode 技能目录（推荐）
 
 ```bash
-git clone https://github.com/lgjjennie-ship-it/book-skill.git
-cd book-skill
-pip install -e ".[dev]"
-
-# 运行测试
-pytest
-
-# 本地安装
-pip install .
+book2skill ~/Desktop/mybooks/机器学习实战.pdf -o ~/.config/opencode/skills/
 ```
+
+### 方法二：生成后手动移动
+
+```bash
+# 先生成到当前目录
+book2skill ~/Desktop/mybooks/机器学习实战.pdf
+
+# 再移动到 OpenCode 技能目录
+mv skills/机器学习实战 ~/.config/opencode/skills/
+```
+
+### 确认部署成功
+
+```bash
+ls ~/.config/opencode/skills/机器学习实战/
+```
+
+应该能看到：
+
+```
+SKILL.md        toc.md          metadata.json   chapters/
+```
+
+---
+
+## 5. 在 OpenCode 中使用
+
+1. **重启 OpenCode**（技能在启动时加载，运行中新增的需要重启）
+2. 在聊天框里直接提问，AI 就会自动调用对应的书籍技能。
+
+### 试一下
+
+在 OpenCode 里输入：
+
+- "帮我总结一下《机器学习实战》的主要内容"
+- "《机器学习实战》第三章讲了什么？"
+- "根据《机器学习实战》，决策树和随机森林有什么区别？"
+
+AI 会自动识别你提到的书名，加载对应技能来回答，而不是靠它训练数据里可能记错的内容。
+
+### 没生效？
+
+检查两点：
+1. 技能文件夹是不是在 `~/.config/opencode/skills/` 下？路径不对 OpenCode 找不到。
+2. OpenCode 重启了吗？新增技能必须重启才能识别。
+
+---
+
+## 6. 转换结果长什么样
+
+转换后，一本书会变成一个技能目录：
+
+```
+机器学习实战/                  ← 技能根目录
+├── SKILL.md                  ← 主技能文件
+│   （包含：书名、摘要、核心概念、全书章节目录、指向各章子技能的链接）
+│
+├── toc.md                    ← 完整目录索引
+│   （包含：每一章的标题、摘要、关键知识点）
+│
+├── metadata.json             ← 机器可读的元数据
+│   （json 格式，包含书名、章数、关键词列表等）
+│
+└── chapters/                 ← 逐章子技能
+    ├── 01_机器学习基础/
+    │   └── SKILL.md          ← 第 1 章技能
+    │       （包含：章摘要、关键概念、上一章/下一章导航）
+    │
+    ├── 02_k-近邻算法/
+    │   └── SKILL.md
+    │
+    └── ...（剩余章节）
+```
+
+**每个 SKILL.md 文件的作用：**
+
+| 文件 | 作用 | 什么时候触发 |
+|------|------|-------------|
+| 根目录 `SKILL.md` | 全书总览 | 提到书名、作者、全书性问题时 |
+| `chapters/01_xxx/SKILL.md` | 单章详解 | 提到具体章节名或编号时 |
+
+---
+
+## 7. 高级用法
+
+### 中文书籍目录识别
+
+`book2skill` 自动识别中文书常见的目录格式：
+
+- `第一章 xxx` / `第1章 xxx`
+- `第一节 xxx` / `第1节 xxx`
+- 编号格式 `1.1`、`2.3.1` 自动建立层级关系
+- 短章节（如序言）自动放宽识别阈值
+
+### 批量转换
+
+有多本书？一行搞定：
+
+```bash
+for book in ~/Desktop/mybooks/*.pdf; do
+    book2skill "$book" -o ~/.config/opencode/skills/
+done
+```
+
+### GitHub Actions 自动转换
+
+如果你把书放在 GitHub 仓库里，可以配置每次 push 自动转换。
+
+1. 在仓库中创建 `books/` 文件夹，放入你的 PDF/EPUB
+2. 将 `.github/workflows/book2skill.yml` 复制到你的仓库
+3. 每次 push 时，GitHub Actions 会自动转换并打包生成结果
+
+```yaml
+# 仓库结构示例
+books/
+├── 算法导论.pdf
+└── 设计模式.epub
+```
+
+---
+
+## 8. 常见问题
+
+### Q: 提示 `command not found: book2skill`
+
+**A:** 安装没成功或者命令没加入 PATH。试试：
+```bash
+python3 -m book2skill --version
+```
+如果能运行，之后每次用 `python3 -m book2skill` 代替 `book2skill` 即可。
+
+如果还是报错，重新安装一次：
+```bash
+pip3 install --force-reinstall git+https://github.com/lgjjennie-ship-it/book-skill.git
+```
+
+### Q: 中文书名被识别成了乱码
+
+**A:** 确保终端编码是 UTF-8。Mac/Linux 默认已是 UTF-8。Windows 用户可以在命令行里先执行：
+```cmd
+chcp 65001
+```
+
+### Q: PDF 转换后目录识别不准
+
+**A:** PDF 是最难处理的格式，不同 PDF 内部结构差异很大。先用 `--toc-only` 看看识别结果：
+```bash
+book2skill mybook.pdf --toc-only
+```
+如果目录识别偏差较大，建议先用 Calibre 等工具把 PDF 转为 EPUB 或 TXT，再用 book2skill 转换。
+
+### Q: 生成的技能文件太多，只想保留某些章节
+
+**A:** 目前不支持筛选章节。你需要手动删除不需要的章节目录。后续版本会加入 `--chapters` 筛选参数。
+
+### Q: 如何更新到最新版？
+
+**A:**
+```bash
+pip3 install --upgrade git+https://github.com/lgjjennie-ship-it/book-skill.git
+```
+
+---
 
 ## License
 
