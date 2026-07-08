@@ -8,7 +8,7 @@ Drop a book in, get a structured skill directory out — master skill, chapter s
 
 ```bash
 # Install
-pip install git+https://github.com/jennie-lai/book-skill.git
+pip install git+https://github.com/lgjjennie-ship-it/book-skill.git
 
 # Convert a book
 book2skill mybook.pdf -o ./skills/
@@ -128,7 +128,7 @@ On push, the action converts all books and uploads generated skills as an artifa
 ## Development
 
 ```bash
-git clone https://github.com/jennie-lai/book-skill.git
+git clone https://github.com/lgjjennie-ship-it/book-skill.git
 cd book-skill
 pip install -e ".[dev]"
 
