@@ -1,5 +1,7 @@
 # 📚 book2skill — 把书变成 AI 技能
 
+`#opencode` `#ai-skills` `#book-to-skill` `#python`
+
 `book2skill` 是一个命令行工具，能把 PDF、EPUB、TXT 格式的电子书，自动转换成 OpenCode 能读懂的"技能文件"。转换后，你在 OpenCode 聊天框里提到书名或章节名，AI 就能像读过这本书一样回答你的问题。
 
 ---

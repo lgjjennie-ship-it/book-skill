@@ -1,5 +1,7 @@
 # 📚 book2skill
 
+`#opencode` `#ai-skills` `#book-to-skill` `#python`
+
 Convert any book (PDF, EPUB, TXT) into **OpenCode-compatible AI skills**.
 
 Drop a book in, get a structured skill directory out — master skill, chapter sub-skills, TOC index, and machine-readable metadata.
