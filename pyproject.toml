@@ -40,8 +40,8 @@ dev = [
 book2skill = "book2skill.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/jennie-lai/book-skill"
-Repository = "https://github.com/jennie-lai/book-skill"
+Homepage = "https://github.com/lgjjennie-ship-it/book-skill"
+Repository = "https://github.com/lgjjennie-ship-it/book-skill"
 
 [tool.setuptools.packages.find]
 include = ["book2skill*"]
