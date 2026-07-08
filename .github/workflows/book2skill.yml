@@ -1,0 +1,57 @@
+name: Book to Skill
+
+on:
+  workflow_dispatch:
+    inputs:
+      book_file:
+        description: 'Path to book file (PDF/EPUB/TXT) in the repo'
+        required: true
+        type: string
+      book_title:
+        description: 'Book title (optional, auto-detected if empty)'
+        required: false
+        type: string
+        default: ''
+      skill_dir:
+        description: 'Output directory for generated skills'
+        required: false
+        type: string
+        default: 'skills'
+  push:
+    paths:
+      - 'books/**/*.pdf'
+      - 'books/**/*.epub'
+      - 'books/**/*.txt'
+    branches:
+      - main
+
+jobs:
+  convert:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install book2skill
+        run: pip install .
+
+      - name: Convert books
+        run: |
+          mkdir -p skills
+          for book in books/*.{pdf,epub,txt} 2>/dev/null; do
+            if [ -f "$book" ]; then
+              echo "Processing: $book"
+              book2skill "$book" -o skills/
+            fi
+          done
+
+      - name: Upload skills artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: generated-skills
+          path: skills/
+          retention-days: 30

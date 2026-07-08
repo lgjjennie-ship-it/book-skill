@@ -1,0 +1,51 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "book2skill"
+version = "0.1.0"
+description = "Convert any book (PDF/EPUB/TXT) into OpenCode-compatible AI skills"
+readme = "README.md"
+license = {text = "MIT"}
+authors = [
+    {name = "Jennie Lai"}
+]
+keywords = ["book", "skill", "opencode", "ai", "pdf", "epub", "knowledge"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+
+requires-python = ">=3.10"
+dependencies = [
+    "pdfplumber>=0.10.0",
+    "ebooklib>=0.18",
+    "beautifulsoup4>=4.12",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-cov>=4.0",
+]
+
+[project.scripts]
+book2skill = "book2skill.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/jennie-lai/book-skill"
+Repository = "https://github.com/jennie-lai/book-skill"
+
+[tool.setuptools.packages.find]
+include = ["book2skill*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
